@@ -1,33 +1,30 @@
 import { NextResponse } from 'next/server';
-import { ZAIClient } from 'z-ai-web-dev-sdk';
+import ZAIClient from 'z-ai-web-dev-sdk'; 
 
 // Initialize Z.ai Client
 const client = new ZAIClient({
-  apiKey: process.env.Z_AI_API_KEY || '', // We will set this in Vercel
+  apiKey: process.env.Z_AI_API_KEY || '',
 });
 
-// Define your valid passwords here
+// Define your valid passwords
 const VALID_CODES = ['ASJVIP', 'TEST', 'JIMENEZ_2025_OWNER#'];
 
 export async function POST(request: Request) {
   try {
     const { prompt, accessCode } = await request.json();
 
-    // 1. Validate Inputs
     if (!prompt) return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
     
-    // 2. Simple Password Check
     if (!VALID_CODES.includes(accessCode?.trim())) {
       return NextResponse.json({ error: 'Invalid Access Code' }, { status: 401 });
     }
 
-    // 3. Generate Video
-    // If no API key is set yet, return a mock video so the site doesn't crash on demo
+    // If no API key is set yet, return mock to prevent crash
     if (!process.env.Z_AI_API_KEY) {
       console.log('Mocking generation (No API Key)');
       await new Promise(r => setTimeout(r, 2000));
       return NextResponse.json({ 
-        url: "https://files.catbox.moe/2f9szw.zip", // Placeholder
+        url: "https://files.catbox.moe/2f9szw.zip", 
         mock: true 
       });
     }
